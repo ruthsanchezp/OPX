@@ -1,0 +1,77 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+button {
+  background-color: #FF7E00 !important; /* Color del botón */
+  color: white !important; /* Color del texto */
+  border: none !important; /* Eliminar bordes */
+}
+
+button:hover {
+  background-color: #FF7E00 !important; /* Color para el hover */
+}
+.btn-hamburger {
+  background-color: #ffffff !important; /* Color del botón */
+  color: rgb(0, 0, 0) !important; /* Color del texto */
+  border: none !important; /* Eliminar bordes */
+}
+
+.btn-hamburger:hover {
+  background-color: #ffffff !important; /* Color para el hover */
+}
+
+/* Especificidad aumentada para sobrescribir estilos de Bootstrap */
+table .table-bordered thead tr {
+  background-color: #021859 !important;
+  color: white !important;
+}
+
+/* Cambia ligeramente el color al hacer hover */
+.table.table-bordered tbody tr:hover {
+  background-color: rgba(2, 24, 89, 0.8) !important;
+}
+/* Estilos para tablas personalizadas */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse; /* Elimina los espacios entre bordes */
+  border: 1px solid #ddd; /* Bordes de la tabla */
+  background-color: #021859; /* Fondo general */
+  color: white; /* Texto en blanco */
+  margin-bottom: 1rem; /* Espaciado inferior */
+  text-align: left; /* Texto alineado a la izquierda */
+}
+
+/* Encabezados de la tabla */
+.custom-table thead th {
+  background-color: #001d73; /* Fondo para encabezados */
+  color: white; /* Color del texto en encabezados */
+  padding: 12px; /* Espaciado interno */
+  border: 1px solid #ddd; /* Bordes de las celdas */
+  text-align: center; /* Alineación centrada */
+}
+
+/* Celdas del cuerpo */
+.custom-table tbody td {
+  padding: 10px; /* Espaciado interno */
+  border: 1px solid #ddd; /* Bordes de las celdas */
+  color: black;
+}
+
+/* Estilo para las filas del cuerpo */
+.custom-table tbody tr {
+  background-color: #ffffff; /* Fondo de las filas */
+}
+
+/* Hover en las filas */
+.custom-table tbody tr:hover {
+  background-color: #F2F2F2; /* Fondo con hover */
+  cursor: pointer; /* Cambia a puntero */
+}
+
+/* Responsividad */
+.custom-table-container {
+  overflow-x: auto; /* Habilita scroll horizontal */
+}
