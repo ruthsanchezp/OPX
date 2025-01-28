@@ -4,18 +4,49 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // o el proveedor que uses
-  url      = env("DATABASE_URL") // URL de la base de datos
+  provider = "postgresql" // Cambia esto si usas otra base de datos
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id        Int     @id @default(autoincrement()) // ID del usuario
-  name      String  // Nombre del usuario
-  role      String  // Rol (e.g., Vendedor, Tecnólogo, Admin)
-  email     String  @unique // Correo electrónico único
-  phone     String? // Teléfono
-  address   String? // Dirección
-  city      String? // Ciudad
-  password  String  // Contraseña
-  createdAt DateTime @default(now()) // Fecha de creación
+  id        Int      @id @default(autoincrement())
+  name      String
+  role      String
+  email     String   @unique
+  phone     String?
+  address   String?
+  city      String?
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Client {
+  client_id   Int       @id @default(autoincrement()) // ID único del cliente
+  first_name  String    @db.VarChar(100)             // Primer nombre del cliente
+  last_name   String?   @db.VarChar(100)             // Apellido del cliente
+  agreement_type String? @db.VarChar(50)
+  id_fiscal   String    @unique @db.VarChar(50)      // Identificador fiscal (RUT, NIT, etc.)
+  phone       String?   @db.VarChar(20)             // Teléfono del cliente
+  email       String?   @db.VarChar(100)            // Correo electrónico del cliente
+  address     String?   @db.VarChar(255)            // Dirección del cliente
+  city        String?   @db.VarChar(100)            // Ciudad del cliente
+  country     String?   @db.VarChar(100)            // País del cliente
+  birth_date  DateTime?                            // Fecha de nacimiento del cliente
+  created_at  DateTime  @default(now())             // Fecha de creación
+
+  agreements  Agreement[] // Relación con la tabla de acuerdos
+}
+
+model Agreement {
+  agreement_id      Int       @id @default(autoincrement()) // ID único del acuerdo
+  client_id         Int       // Relación con la tabla 'clients'
+  agreement_type    String?    @db.VarChar(50)              // Tipo de acuerdo (e.g., Empresa, Hospital)
+  start_date        DateTime?  // Fecha de inicio del acuerdo
+  end_date          DateTime? // Fecha de finalización del acuerdo
+  status            String?    @db.VarChar(20)              // Estado del acuerdo (Activo, Pendiente)
+  total_amount      Float?     // Monto total acordado en el convenio
+  total_installments Int?      // Número total de cuotas pactadas
+  created_at        DateTime?  @default(now())              // Fecha de creación
+
+  client            Client    @relation(fields: [client_id], references: [client_id], onDelete: Cascade) // Relación con Client
 }

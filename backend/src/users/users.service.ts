@@ -7,7 +7,15 @@ import * as bcrypt from 'bcrypt'; // Librería para encriptar la contraseña
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
-
+  
+    // users.service.ts
+   async remove(id: number) {
+    const userId = parseInt(id as any, 10); // Convertir ID a número si es necesario
+     return this.prisma.user.delete({
+  where: { id: userId },
+    });
+  }
+  
   // Método para obtener todos los usuarios
   async findAll() {
     return this.prisma.user.findMany();  // Prisma obtiene todos los usuarios

@@ -4,9 +4,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';  
 import { PrismaService } from './prisma/prisma.service';  
+import { ClientsModule } from './clients/clients.module';
+
 
 @Module({
-  imports: [UsersModule],  // Solo importamos UsersModule, ya que PrismaService está dentro de UsersModule
+  imports: [UsersModule, ClientsModule],  
   controllers: [AppController],
   providers: [AppService, PrismaService],  // Si PrismaService está en un módulo separado, lo añadimos a providers
 })
