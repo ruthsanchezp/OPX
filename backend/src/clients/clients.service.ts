@@ -157,23 +157,27 @@ async findOne(id: number | string) {
   }
 
   // Eliminar un cliente y sus acuerdos
-  async delete(id: number) {
+  async delete(id: number | string) {
     try {
       console.log(`Deleting client with ID: ${id}`);
+  
+      // Asegúrate de convertir id a número si llega como string
+      const clientId = typeof id === 'string' ? parseInt(id, 10) : id;
+  
       const client = await this.prisma.client.findUnique({
-        where: { client_id: id },
+        where: { client_id: clientId },
       });
-
+  
       if (!client) {
         throw new NotFoundException(`Client with ID ${id} not found`);
       }
-
+  
       return await this.prisma.client.delete({
-        where: { client_id: id },
+        where: { client_id: clientId },
       });
     } catch (error) {
       console.error(`Error deleting client with ID ${id}:`, error);
       throw error;
     }
   }
-}
+}  
