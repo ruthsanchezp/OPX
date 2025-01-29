@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt'; // Librería para encriptar la contraseña
 
+
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}

@@ -85,6 +85,7 @@ export default function EditUser() {
                   >
                     <option value="Vendedor">Vendedor</option>
                     <option value="Tecnólogo Médico">Tecnólogo Médico</option>
+                    <option value="Montajista">Montajista</option>
                     <option value="Externo">Administrador</option>
                   </select>
                 </div>

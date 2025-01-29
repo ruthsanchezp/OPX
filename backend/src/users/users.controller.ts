@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+// src/users/users.controller.ts
+import { Controller, Get, Post, Put, Param, Body, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto'; // DTO para crear usuario
 import { UpdateUserDto } from './dto/update-user.dto'; // DTO para actualizar usuario

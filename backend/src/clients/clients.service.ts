@@ -113,7 +113,6 @@ async findOne(id: number | string) {
           email: clientData.email,
           address: clientData.address,
           city: clientData.city,
-          country: clientData.country,
           birth_date: clientData.birth_date,
           agreements: agreements
             ? {

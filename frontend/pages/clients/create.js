@@ -145,18 +145,7 @@ export default function CreateClient() {
             />
           </div>
 
-          <div className="mb-3">
-            <label className="form-label">Country</label>
-            <input
-              type="text"
-              name="country"
-              value={client.country}
-              onChange={handleChange}
-              className="form-control"
-            />
-          </div>
-
-          <div className="mb-3">
+           <div className="mb-3">
             <label className="form-label">Birth Date</label>
             <input
               type="date"

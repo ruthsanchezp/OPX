@@ -30,7 +30,6 @@ model Client {
   email       String?   @db.VarChar(100)            // Correo electrónico del cliente
   address     String?   @db.VarChar(255)            // Dirección del cliente
   city        String?   @db.VarChar(100)            // Ciudad del cliente
-  country     String?   @db.VarChar(100)            // País del cliente
   birth_date  DateTime?                            // Fecha de nacimiento del cliente
   created_at  DateTime  @default(now())             // Fecha de creación
 
