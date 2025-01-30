@@ -6,14 +6,14 @@ async function bootstrap() {
 
   // Habilitar CORS antes de que la aplicación comience a escuchar
   app.enableCors({
-    origin: '*', // Cambiar según las necesidades de seguridad
+    origin: '*', // Cambiar según necesidades de seguridad
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
 
-  // Escuchar en el puerto definido por el entorno o usar 3001 como predeterminado
+  // Definir el puerto (por variable de entorno o 3001 por defecto)
   const port = process.env.PORT || 3001;
   await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
+  console.log(`🚀 Application is running on: http://localhost:${port}`);
 }
 
 bootstrap();

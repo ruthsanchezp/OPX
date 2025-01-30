@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 
@@ -13,13 +13,25 @@ export default function CreateClient() {
     email: "",
     address: "",
     city: "",
-    country: "",
     birth_date: "",
-    agreement_type: "", // Añadido para manejar "Convenio"
+    agreement_type: "", // Aquí se almacenará el convenio seleccionado
   });
 
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [agreements, setAgreements] = useState([]); // Lista de convenios disponibles
+
+  // Obtener convenios disponibles de la API
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/agreements")
+      .then((response) => {
+        setAgreements(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching agreements:", error);
+      });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,7 +48,7 @@ export default function CreateClient() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3001/clients", client);
+      await axios.post("http://localhost:3001/clients", client);
       setSuccessMessage("Client created successfully!");
       setTimeout(() => {
         router.push("/clients");
@@ -90,17 +102,26 @@ export default function CreateClient() {
               required
             />
           </div>
+
+          {/* Campo para seleccionar un convenio */}
           <div className="mb-3">
             <label className="form-label">Convenio</label>
-            <input
-              type="text"
+            <select
               name="agreement_type"
               value={client.agreement_type}
               onChange={handleChange}
               className="form-control"
               required
-            />
+            >
+              <option value="">Seleccione un convenio</option>
+              {agreements.map((agreement) => (
+                <option key={agreement.agreement_id} value={agreement.agreement_type}>
+                  {agreement.agreement_type}
+                </option>
+              ))}
+            </select>
           </div>
+
           <div className="mb-3">
             <label className="form-label">Phone</label>
             <input
@@ -145,18 +166,20 @@ export default function CreateClient() {
             />
           </div>
 
-           <div className="mb-3">
+          <div className="mb-3">
             <label className="form-label">Birth Date</label>
             <input
               type="date"
               name="birth_date"
-              value={client.birth_date.split('T')[0]} // Mostrar solo la parte de fecha
+              value={client.birth_date.split("T")[0]} // Mostrar solo la parte de fecha
               onChange={handleChange}
               className="form-control"
             />
           </div>
 
-          <button type="submit" className="btn btn-primary w-100">Create Client</button>
+          <button type="submit" className="btn btn-primary w-100">
+            Create Client
+          </button>
         </form>
       </div>
     </div>

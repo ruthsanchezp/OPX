@@ -6,10 +6,11 @@ import {
   Delete,
   Param,
   Body,
+  NotFoundException, // ✅ Agregado
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
-import { CreateClientDto } from './dto/create-client.dto'; // DTO para crear cliente
-import { UpdateClientDto } from './dto/update-client.dto'; // DTO para actualizar cliente
+import { CreateClientDto } from './dto/create-client.dto';
+import { UpdateClientDto } from './dto/update-client.dto';
 
 @Controller('clients')
 export class ClientsController {
@@ -25,6 +26,16 @@ export class ClientsController {
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return this.clientsService.findOne(id);
+  }
+
+  // ✅ Buscar cliente por ID Fiscal
+  @Get('search/:idFiscal')
+  async findByIdFiscal(@Param('idFiscal') idFiscal: string) {
+    const client = await this.clientsService.findByIdFiscal(idFiscal);
+    if (!client) {
+      throw new NotFoundException(`Client with ID Fiscal ${idFiscal} not found`);
+    }
+    return client;
   }
 
   // Crear un nuevo cliente

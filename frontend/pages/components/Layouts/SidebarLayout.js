@@ -2,21 +2,15 @@ import { useState } from "react";
 import Link from "next/link";
 
 export default function SidebarLayout({ children }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar abierta por defecto
-  const [isAdminOpen, setIsAdminOpen] = useState(false); // Sección de administración cerrada por defecto
-  const [isClientOpen, setIsClientOpen] = useState(false); // Sección de clientes cerrada por defecto
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isClientOpen, setIsClientOpen] = useState(false);
+  const [isAgreementOpen, setIsAgreementOpen] = useState(false);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const toggleAdmin = () => {
-    setIsAdminOpen(!isAdminOpen);
-  };
-
-  const toggleClient = () => {
-    setIsClientOpen(!isClientOpen);
-  };
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const toggleAdmin = () => setIsAdminOpen(!isAdminOpen);
+  const toggleClient = () => setIsClientOpen(!isClientOpen);
+  const toggleAgreement = () => setIsAgreementOpen(!isAgreementOpen);
 
   return (
     <div className="container-fluid">
@@ -57,14 +51,7 @@ export default function SidebarLayout({ children }) {
           <ul className="list-unstyled" style={{ listStyle: "none", paddingLeft: 0 }}>
             {/* Sección Administración */}
             <li>
-              <div
-                className="text-white text-start p-0 mb-2"
-                onClick={toggleAdmin}
-                style={{
-                  textDecoration: "none",
-                  cursor: "pointer",
-                }}
-              >
+              <div className="text-white text-start p-0 mb-2" onClick={toggleAdmin} style={{ cursor: "pointer" }}>
                 Administración {isAdminOpen ? "▲" : "▼"}
               </div>
               {isAdminOpen && (
@@ -83,19 +70,11 @@ export default function SidebarLayout({ children }) {
               )}
             </li>
 
-            {/* Separación entre secciones */}
             <li className="mt-4"></li>
 
             {/* Sección Clientes */}
             <li>
-              <div
-                className="text-white text-start p-0 mb-2"
-                onClick={toggleClient}
-                style={{
-                  textDecoration: "none",
-                  cursor: "pointer",
-                }}
-              >
+              <div className="text-white text-start p-0 mb-2" onClick={toggleClient} style={{ cursor: "pointer" }}>
                 Clientes {isClientOpen ? "▲" : "▼"}
               </div>
               {isClientOpen && (
@@ -108,6 +87,41 @@ export default function SidebarLayout({ children }) {
                   <li style={{ marginLeft: "10px" }}>
                     <Link href="/clients/create" className="text-white text-decoration-none">
                       Crear Cliente
+                    </Link>
+                  </li>
+                  <li className="mt-4"></li>
+                  {/* 🔹 Nueva Sección: Órdenes Médicas */}
+                  <li className="mb-2" style={{ marginLeft: "10px" }}>
+                    <Link href="/medical-orders" className="text-white text-decoration-none">
+                      Listar Órdenes
+                    </Link>
+                  </li>
+                  <li style={{ marginLeft: "10px" }}>
+                    <Link href="/medical-orders/create" className="text-white text-decoration-none">
+                      Crear Orden
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+
+            <li className="mt-4"></li>
+
+            {/* Sección Convenios */}
+            <li>
+              <div className="text-white text-start p-0 mb-2" onClick={toggleAgreement} style={{ cursor: "pointer" }}>
+                Convenios {isAgreementOpen ? "▲" : "▼"}
+              </div>
+              {isAgreementOpen && (
+                <ul className="pl-3" style={{ listStyle: "none", paddingLeft: "15px" }}>
+                  <li className="mb-2" style={{ marginLeft: "10px" }}>
+                    <Link href="/agreements" className="text-white text-decoration-none">
+                      Listar Convenios
+                    </Link>
+                  </li>
+                  <li style={{ marginLeft: "10px" }}>
+                    <Link href="/agreements/create" className="text-white text-decoration-none">
+                      Crear Convenio
                     </Link>
                   </li>
                 </ul>

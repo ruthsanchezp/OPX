@@ -12,9 +12,11 @@
     "dev:all": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\""
   },
   "dependencies": {
+    "@types/pdfkit": "^0.13.8",
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
     "next": "15.1.6",
+    "pdfkit": "^0.16.0",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.8",
     "react-dom": "^19.0.0"

@@ -65,6 +65,7 @@ export default function ListClients() {
               <th>Last Name</th>
               <th>ID Fiscal</th>
               <th>Email</th>
+              <th>Agreement Type</th> {/* Nueva columna */}
               <th>Actions</th>
             </tr>
           </thead>
@@ -77,6 +78,7 @@ export default function ListClients() {
                   <td>{client.last_name || "N/A"}</td>
                   <td>{client.id_fiscal}</td>
                   <td>{client.email || "N/A"}</td>
+                  <td>{client.agreement_type || "N/A"}</td> {/* Mostrando Agreement Type */}
                   <td>
                     <button
                       onClick={() =>
@@ -100,7 +102,7 @@ export default function ListClients() {
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="text-center">
+                <td colSpan="7" className="text-center">
                   No clients found.
                 </td>
               </tr>

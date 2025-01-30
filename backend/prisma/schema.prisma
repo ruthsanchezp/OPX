@@ -1,10 +1,9 @@
-// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql" // Cambia esto si usas otra base de datos
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -18,34 +17,76 @@ model User {
   city      String?
   password  String
   createdAt DateTime @default(now())
+
+  medicalOrdersCreated MedicalOrder[] @relation("UserCreatedOrders")
+  medicalOrdersReviewed MedicalOrder[] @relation("UserReviewedOrders")
 }
 
 model Client {
-  client_id   Int       @id @default(autoincrement()) // ID único del cliente
-  first_name  String    @db.VarChar(100)             // Primer nombre del cliente
-  last_name   String?   @db.VarChar(100)             // Apellido del cliente
+  client_id   Int       @id @default(autoincrement())
+  first_name  String    @db.VarChar(100)
+  last_name   String?   @db.VarChar(100)
   agreement_type String? @db.VarChar(50)
-  id_fiscal   String    @unique @db.VarChar(50)      // Identificador fiscal (RUT, NIT, etc.)
-  phone       String?   @db.VarChar(20)             // Teléfono del cliente
-  email       String?   @db.VarChar(100)            // Correo electrónico del cliente
-  address     String?   @db.VarChar(255)            // Dirección del cliente
-  city        String?   @db.VarChar(100)            // Ciudad del cliente
-  birth_date  DateTime?                            // Fecha de nacimiento del cliente
-  created_at  DateTime  @default(now())             // Fecha de creación
+  id_fiscal   String    @unique @db.VarChar(50)
+  phone       String?   @db.VarChar(20)
+  email       String?   @db.VarChar(100)
+  address     String?   @db.VarChar(255)
+  city        String?   @db.VarChar(100)
+  birth_date  DateTime?
+  created_at  DateTime  @default(now())
 
-  agreements  Agreement[] // Relación con la tabla de acuerdos
+  medicalOrders MedicalOrder[]
 }
 
 model Agreement {
-  agreement_id      Int       @id @default(autoincrement()) // ID único del acuerdo
-  client_id         Int       // Relación con la tabla 'clients'
-  agreement_type    String?    @db.VarChar(50)              // Tipo de acuerdo (e.g., Empresa, Hospital)
-  start_date        DateTime?  // Fecha de inicio del acuerdo
-  end_date          DateTime? // Fecha de finalización del acuerdo
-  status            String?    @db.VarChar(20)              // Estado del acuerdo (Activo, Pendiente)
-  total_amount      Float?     // Monto total acordado en el convenio
-  total_installments Int?      // Número total de cuotas pactadas
-  created_at        DateTime?  @default(now())              // Fecha de creación
+  agreement_id      Int       @id @default(autoincrement())
+  agreement_type    String?   @db.VarChar(50)
+  start_date        DateTime?
+  end_date          DateTime?
+  status            String?   @db.VarChar(20)
+  total_installments Int?
+  created_at        DateTime?  @default(now())
+}
+model MedicalOrder {
+  order_id      Int      @id @default(autoincrement())
+  client_id     Int
+  created_by    Int
+  reviewed_by   Int?
+  created_at    DateTime @default(now())
 
-  client            Client    @relation(fields: [client_id], references: [client_id], onDelete: Cascade) // Relación con Client
+  observaciones String?   @db.Text    // 🔹 Nuevo campo
+  cristales     String?   @db.VarChar(255)  // 🔹 Nuevo campo
+
+  client        Client  @relation(fields: [client_id], references: [client_id])
+  createdBy     User    @relation("UserCreatedOrders", fields: [created_by], references: [id])
+  reviewedBy    User?   @relation("UserReviewedOrders", fields: [reviewed_by], references: [id])
+
+  graduations   Graduation[]       // 🔹 Graduación para Lentes de Lejos
+  graduationsNear GraduationNear[] // 🔹 Nueva relación para Lentes de Cerca
+}
+
+model GraduationNear {
+  graduation_near_id Int     @id @default(autoincrement())
+  order_id           Int
+  eye               String  @db.VarChar(10) // "O.D" o "O.I"
+  SPH               Float?
+  CYL               Float?
+  EJE               Float?
+  DP                Float?
+  created_at        DateTime @default(now())
+
+  medicalOrder      MedicalOrder @relation(fields: [order_id], references: [order_id])
+}
+
+model Graduation {
+  graduation_id Int     @id @default(autoincrement())
+  order_id      Int
+  eye           String  @db.VarChar(10) // "O.D" o "O.I"
+  SPH           Float?
+  CYL           Float?
+  EJE           Float?
+  DP            Float?
+  created_at    DateTime @default(now())
+
+  medicalOrder  MedicalOrder @relation(fields: [order_id], references: [order_id])
 }
