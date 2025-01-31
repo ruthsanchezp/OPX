@@ -43,4 +43,6 @@ export class MedicalOrdersController {
   async remove(@Param('id') id: string) {
     return this.medicalOrdersService.remove(Number(id));
   }
+
+  
 }

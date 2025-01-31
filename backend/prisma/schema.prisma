@@ -1,51 +1,17 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  role      String
-  email     String   @unique
-  phone     String?
-  address   String?
-  city      String?
-  password  String
-  createdAt DateTime @default(now())
-
-  medicalOrdersCreated MedicalOrder[] @relation("UserCreatedOrders")
-  medicalOrdersReviewed MedicalOrder[] @relation("UserReviewedOrders")
-}
-
 model Client {
-  client_id   Int       @id @default(autoincrement())
-  first_name  String    @db.VarChar(100)
-  last_name   String?   @db.VarChar(100)
-  agreement_type String? @db.VarChar(50)
-  id_fiscal   String    @unique @db.VarChar(50)
-  phone       String?   @db.VarChar(20)
-  email       String?   @db.VarChar(100)
-  address     String?   @db.VarChar(255)
-  city        String?   @db.VarChar(100)
-  birth_date  DateTime?
-  created_at  DateTime  @default(now())
+  client_id      Int            @id @default(autoincrement())
+  first_name     String         @db.VarChar(100)
+  last_name      String?        @db.VarChar(100)
+  agreement_type String?        @db.VarChar(50)
+  id_fiscal      String         @unique @db.VarChar(50)
+  phone          String?        @db.VarChar(20)
+  email          String?        @db.VarChar(100)
+  address        String?        @db.VarChar(255)
+  city           String?        @db.VarChar(100)
+  birth_date     DateTime?
+  created_at     DateTime       @default(now())
 
-  medicalOrders MedicalOrder[]
-}
-
-model Agreement {
-  agreement_id      Int       @id @default(autoincrement())
-  agreement_type    String?   @db.VarChar(50)
-  start_date        DateTime?
-  end_date          DateTime?
-  status            String?   @db.VarChar(20)
-  total_installments Int?
-  created_at        DateTime?  @default(now())
+  medicalOrders  MedicalOrder[] @relation(onDelete: Cascade)  // 🔹 Elimina órdenes al borrar el cliente
 }
 model MedicalOrder {
   order_id      Int      @id @default(autoincrement())
@@ -54,39 +20,39 @@ model MedicalOrder {
   reviewed_by   Int?
   created_at    DateTime @default(now())
 
-  observaciones String?   @db.Text    // 🔹 Nuevo campo
-  cristales     String?   @db.VarChar(255)  // 🔹 Nuevo campo
+  observaciones String?   @db.Text
+  cristales     String?   @db.VarChar(255)
 
-  client        Client  @relation(fields: [client_id], references: [client_id])
-  createdBy     User    @relation("UserCreatedOrders", fields: [created_by], references: [id])
-  reviewedBy    User?   @relation("UserReviewedOrders", fields: [reviewed_by], references: [id])
+  client        Client    @relation(fields: [client_id], references: [client_id], onDelete: Cascade) 
+  createdBy     User      @relation("UserCreatedOrders", fields: [created_by], references: [id], onDelete: Cascade)  // 🔹 Se eliminan órdenes con el usuario
+  reviewedBy    User?     @relation("UserReviewedOrders", fields: [reviewed_by], references: [id], onDelete: Cascade)  // 🔹 Se eliminan órdenes revisadas con el usuario
 
-  graduations   Graduation[]       // 🔹 Graduación para Lentes de Lejos
-  graduationsNear GraduationNear[] // 🔹 Nueva relación para Lentes de Cerca
-}
-
-model GraduationNear {
-  graduation_near_id Int     @id @default(autoincrement())
-  order_id           Int
-  eye               String  @db.VarChar(10) // "O.D" o "O.I"
-  SPH               Float?
-  CYL               Float?
-  EJE               Float?
-  DP                Float?
-  created_at        DateTime @default(now())
-
-  medicalOrder      MedicalOrder @relation(fields: [order_id], references: [order_id])
+  graduations   Graduation[]       @relation(onDelete: Cascade)  
+  graduationsNear GraduationNear[] @relation(onDelete: Cascade)  
 }
 
 model Graduation {
   graduation_id Int     @id @default(autoincrement())
   order_id      Int
-  eye           String  @db.VarChar(10) // "O.D" o "O.I"
+  eye           String  @db.VarChar(10)
   SPH           Float?
   CYL           Float?
   EJE           Float?
   DP            Float?
   created_at    DateTime @default(now())
 
-  medicalOrder  MedicalOrder @relation(fields: [order_id], references: [order_id])
+  medicalOrder  MedicalOrder @relation(fields: [order_id], references: [order_id], onDelete: Cascade)  // 🔹 Se eliminan al borrar la orden
+}
+
+model GraduationNear {
+  graduation_near_id Int     @id @default(autoincrement())
+  order_id           Int
+  eye               String  @db.VarChar(10)
+  SPH               Float?
+  CYL               Float?
+  EJE               Float?
+  DP                Float?
+  created_at        DateTime @default(now())
+
+  medicalOrder      MedicalOrder @relation(fields: [order_id], references: [order_id], onDelete: Cascade)  // 🔹 Se eliminan al borrar la orden
 }
