@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 
-export default function EditMedicalOrder() {
+export default function EditMedicalOrder({onRedirect }) {
   const router = useRouter();
   const { id } = router.query;
   const [order, setOrder] = useState(null);
@@ -75,10 +75,18 @@ export default function EditMedicalOrder() {
     try {
       await axios.put(`http://localhost:3001/medical-orders/${id}`, updatedOrder);
       setSuccessMessage("Medical Order updated successfully!");
-      setTimeout(() => router.push("/medical-orders"), 2000);
+      setTimeout(() => {
+        if (onRedirect) {
+          onRedirect(); // ✅ Usa la redirección personalizada si está en el perfil del cliente
+        } else {
+          router.push("/medical-orders"); // 🔹 Redirección normal si no está en perfil cliente
+        }
+      }, 2000);
     } catch (error) {
       console.error("Error updating medical order:", error);
     }
+    
+    
   };
 
   if (loading) {

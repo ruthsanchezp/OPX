@@ -43,6 +43,9 @@ export class MedicalOrdersController {
   async remove(@Param('id') id: string) {
     return this.medicalOrdersService.remove(Number(id));
   }
-
+  @Get(':client_id/medical-orders')
+  async getClientMedicalOrders(@Param('client_id') clientId: string) {
+    return this.medicalOrdersService.getClientMedicalOrders(Number(clientId)); // 🔹 Convertimos a número
+  }
   
 }

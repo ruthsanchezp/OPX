@@ -2,15 +2,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 
-export default function CreateMedicalOrder() {
+export default function CreateMedicalOrder({clientId, onRedirect }) {
   const router = useRouter();
   const [technologists, setTechnologists] = useState([]);
   const [searchRut, setSearchRut] = useState("");
   const [selectedClient, setSelectedClient] = useState(null);
   const [error, setError] = useState(null);
-
   const [order, setOrder] = useState({
-    client_id: "",
+    client_id: clientId || "", // ✅ Usa el clientId si está disponible
     created_by: "",
     created_at: new Date().toISOString(),
     graduations: [
@@ -25,39 +24,45 @@ export default function CreateMedicalOrder() {
     cristales: "",
   });
 
-  useEffect(() => {
-    axios.get("http://localhost:3001/users?role=technologist").then((response) => {
-      setTechnologists(response.data);
-    });
-  }, []);
+// 1️⃣ Cargar tecnólogos médicos al montar el componente
+useEffect(() => {
+  axios.get("http://localhost:3001/users?role=technologist").then((response) => {
+    setTechnologists(response.data);
+  });
+}, []);
 
-  const calculateAge = (birthDate) => {
-    if (!birthDate) return "N/A";
-    const birth = new Date(birthDate);
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    return age;
-  };
-
-  const fetchClientByRut = async () => {
-    if (searchRut.trim().length > 0) {
-      try {
-        const response = await axios.get(`http://localhost:3001/clients/search/${searchRut}`);
+// 2️⃣ Cargar automáticamente los datos del cliente si hay un `clientId` en la URL
+useEffect(() => {
+  if (clientId) {
+    axios
+      .get(`http://localhost:3001/clients/${clientId}`)
+      .then((response) => {
         setSelectedClient(response.data);
+        setSearchRut(response.data.id_fiscal); // ✅ Rellenar automáticamente el campo del RUT
         setOrder((prevOrder) => ({
           ...prevOrder,
           client_id: response.data.client_id,
         }));
-        setError(null);
-      } catch (error) {
-        setError(error.response?.status === 404 ? "El cliente con ese RUT no existe." : "Error al buscar el cliente.");
-        setSelectedClient(null);
-      }
-    }
-  };
+      })
+      .catch((error) => {
+        setError("Error fetching client details.");
+        console.error("Error fetching client:", error);
+      });
+  }
+}, [clientId]);
+
+// ✅ Función para calcular la edad del cliente
+const calculateAge = (birthDate) => {
+  if (!birthDate) return "N/A";
+  const birth = new Date(birthDate);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+};
+
 
   const handleRutKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -65,6 +70,25 @@ export default function CreateMedicalOrder() {
       fetchClientByRut();
     }
   };
+
+  // ✅ Definir la función `fetchClientByRut`
+const fetchClientByRut = async () => {
+  if (searchRut.trim().length > 0) {
+    try {
+      const response = await axios.get(`http://localhost:3001/clients/search/${searchRut}`);
+      setSelectedClient(response.data);
+      setOrder((prevOrder) => ({
+        ...prevOrder,
+        client_id: response.data.client_id,
+      }));
+      setError(null);
+    } catch (error) {
+      setError(error.response?.status === 404 ? "El cliente con ese RUT no existe." : "Error al buscar el cliente.");
+      setSelectedClient(null);
+    }
+  }
+};
+
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(fetchClientByRut, 500);
@@ -111,14 +135,18 @@ export default function CreateMedicalOrder() {
     };
 
     console.log("📤 Enviando datos al backend:", formattedOrder);
-
     try {
       await axios.post("http://localhost:3001/medical-orders", formattedOrder);
       alert("¡Orden médica creada con éxito!");
-      router.push("/medical-orders");
+      if (onRedirect) {
+        onRedirect(); // ✅ Usa la redirección personalizada si está en el perfil del cliente
+      } else {
+        router.push("/medical-orders"); // 🔹 Redirección normal si no está en perfil cliente
+      }
     } catch (error) {
       console.error("❌ Error al crear la orden:", error);
     }
+    
   };
   const handleDeleteConfirm = async () => {
     if (orderToDelete) {
@@ -156,10 +184,20 @@ export default function CreateMedicalOrder() {
       <h1 className="text-center mb-4">Crear Orden Médica</h1>
       
       <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Buscar por RUT (ID Fiscal)</label>
-          <input type="text" className="form-control" value={searchRut} onChange={(e) => setSearchRut(e.target.value)} onKeyDown={handleRutKeyDown} placeholder="Ingrese el RUT y presione Enter" required />
-        </div>
+      <div className="mb-3">
+  <label className="form-label">Buscar por RUT (ID Fiscal)</label>
+  <input
+    type="text"
+    className="form-control"
+    value={searchRut} // ✅ Muestra el ID Fiscal automáticamente
+    onChange={(e) => setSearchRut(e.target.value)}
+    onKeyDown={handleRutKeyDown}
+    placeholder="Ingrese el RUT y presione Enter"
+    required
+    disabled={!!selectedClient} // ✅ Bloquea edición si ya hay cliente seleccionado
+  />
+</div>
+
 
         {error && <p className="text-danger">{error}</p>}
 

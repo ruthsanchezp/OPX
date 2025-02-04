@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Modal, Button, Alert } from "react-bootstrap";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function ListClients() {
   const [clients, setClients] = useState([]); // Estado para almacenar los clientes
@@ -74,7 +75,11 @@ export default function ListClients() {
               clients.map((client) => (
                 <tr key={client.client_id}>
                   <td>{client.client_id}</td>
-                  <td>{client.first_name}</td>
+                  <td>
+                    <Link href={`/clients/${client.client_id}`} className="text-decoration-none">
+                      {client.first_name} {client.last_name}
+                    </Link>
+                  </td>
                   <td>{client.last_name || "N/A"}</td>
                   <td>{client.id_fiscal}</td>
                   <td>{client.email || "N/A"}</td>
@@ -117,8 +122,7 @@ export default function ListClients() {
           <Modal.Title>Confirm Deletion</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete this client? This action cannot be
-          undone.
+          Are you sure you want to delete this client? This action cannot be undone.
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>

@@ -11,10 +11,14 @@ import {
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { MedicalOrdersService } from '../medical-orders/medical-orders.service'; // 👈 Importar el servicio de órdenes médicas
 
 @Controller('clients')
 export class ClientsController {
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(
+  private readonly clientsService: ClientsService,     
+  private readonly medicalOrdersService: MedicalOrdersService // 👈 Agregar esto
+  ) {}
 
   // Obtener todos los clientes
   @Get()
@@ -58,4 +62,14 @@ export class ClientsController {
   async delete(@Param('id') id: number) {
     return this.clientsService.delete(id);
   }
+  @Get(':client_id/medical-orders')
+  async getClientMedicalOrders(@Param('client_id') clientId: string) {
+    const parsedClientId = parseInt(clientId, 10); // 🔹 Convertir `clientId` a número
+    if (isNaN(parsedClientId)) {
+      throw new NotFoundException(`Invalid client ID: ${clientId}`);
+    }
+    return this.medicalOrdersService.getClientMedicalOrders(parsedClientId);
+  }
+  
+  
 }

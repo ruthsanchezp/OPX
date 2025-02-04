@@ -128,4 +128,16 @@ export class ClientsService {
       throw error;
     }
   }
+  async getClientMedicalOrders(clientId: number) {
+    return this.prisma.medicalOrder.findMany({
+      where: { client_id: clientId },
+      include: {
+        graduations: true,
+        graduationsNear: true,
+      },
+    });
+  }
+  
+  
+  
 }

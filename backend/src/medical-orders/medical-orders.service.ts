@@ -133,6 +133,17 @@ export class MedicalOrdersService {
       }),
     ]);
   }
+  async getClientMedicalOrders(clientId: number) { // ✅ Ahora recibe un número
+    return this.prisma.medicalOrder.findMany({
+      where: { client_id: clientId }, // ✅ clientId ahora es un número
+      include: {
+        graduations: true,
+        graduationsNear: true,
+      },
+    });
+  }
+  
+  
 
   // ✅ Eliminar una orden médica
   async remove(id: number) {
