@@ -5,11 +5,13 @@ export default function SidebarLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isClientOpen, setIsClientOpen] = useState(false);
+  const [isMedicalOrdersOpen, setIsMedicalOrdersOpen] = useState(false);
   const [isAgreementOpen, setIsAgreementOpen] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleAdmin = () => setIsAdminOpen(!isAdminOpen);
   const toggleClient = () => setIsClientOpen(!isClientOpen);
+  const toggleMedicalOrders = () => setIsMedicalOrdersOpen(!isMedicalOrdersOpen);
   const toggleAgreement = () => setIsAgreementOpen(!isAgreementOpen);
 
   return (
@@ -49,6 +51,7 @@ export default function SidebarLayout({ children }) {
         >
           <h1 className="text-xl font-bold mb-4">Logo</h1>
           <ul className="list-unstyled" style={{ listStyle: "none", paddingLeft: 0 }}>
+            
             {/* Sección Administración */}
             <li>
               <div className="text-white text-start p-0 mb-2" onClick={toggleAdmin} style={{ cursor: "pointer" }}>
@@ -89,8 +92,19 @@ export default function SidebarLayout({ children }) {
                       Crear Cliente
                     </Link>
                   </li>
-                  <li className="mt-4"></li>
-                  {/* 🔹 Nueva Sección: Órdenes Médicas */}
+                </ul>
+              )}
+            </li>
+
+            <li className="mt-4"></li>
+
+            {/* Nueva Sección: Órdenes Médicas */}
+            <li>
+              <div className="text-white text-start p-0 mb-2" onClick={toggleMedicalOrders} style={{ cursor: "pointer" }}>
+                Órdenes Médicas {isMedicalOrdersOpen ? "▲" : "▼"}
+              </div>
+              {isMedicalOrdersOpen && (
+                <ul className="pl-3" style={{ listStyle: "none", paddingLeft: "15px" }}>
                   <li className="mb-2" style={{ marginLeft: "10px" }}>
                     <Link href="/medical-orders" className="text-white text-decoration-none">
                       Listar Órdenes
