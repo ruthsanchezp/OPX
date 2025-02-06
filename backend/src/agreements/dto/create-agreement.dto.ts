@@ -1,7 +1,14 @@
+import { PaymentStatus } from '@prisma/client';  // ✅ Importación correcta
+
 export class CreateAgreementDto {
-  agreement_type: string;
-  start_date?: string;  // Cambiado a string para recibir desde el frontend
-  end_date?: string;    // Cambiado a string para recibir desde el frontend
-  status: string;
+  name: string;  // ✅ Agregar este campo obligatorio
+  agreement_type?: string;
+  start_date?: string;
+  end_date?: string;
+  status: PaymentStatus;  // ✅ Se usa el ENUM correctamente
   total_installments?: number;
 }
+
+
+
+

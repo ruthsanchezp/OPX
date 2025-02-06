@@ -21,14 +21,24 @@ export class AgreementsService {
   }
 
   async create(createAgreementDto: CreateAgreementDto) {
-    return await this.prisma.agreement.create({
-      data: {
-        ...createAgreementDto,
-        start_date: createAgreementDto.start_date ? new Date(createAgreementDto.start_date) : null,
-        end_date: createAgreementDto.end_date ? new Date(createAgreementDto.end_date) : null,
-      },
-    });
+    try {
+      return await this.prisma.agreement.create({
+        data: {
+          name: createAgreementDto.name, 
+          agreement_type: createAgreementDto.agreement_type,
+          start_date: createAgreementDto.start_date ? new Date(createAgreementDto.start_date) : null,
+          end_date: createAgreementDto.end_date ? new Date(createAgreementDto.end_date) : null,
+          status: createAgreementDto.status,
+          total_installments: createAgreementDto.total_installments ? parseInt(createAgreementDto.total_installments, 10) : null, // 🔹 Conversión a número
+        },
+      });
+    } catch (error) {
+      console.error("Error creating agreement:", error);
+      throw new Error("Failed to create agreement. Please check the input data.");
+    }
   }
+  
+
 
   async update(id: number | string, updateAgreementDto: UpdateAgreementDto) {
     const agreementId = this.validateId(id);

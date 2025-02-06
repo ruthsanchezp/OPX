@@ -26,9 +26,13 @@ export class AgreementsController {
   // Crear un nuevo acuerdo
   @Post()
   async create(@Body() createAgreementDto: CreateAgreementDto) {
-    return this.agreementsService.create(createAgreementDto);
+    try {
+      return await this.agreementsService.create(createAgreementDto);
+    } catch (error) {
+      throw new NotFoundException("Agreement creation failed: " + error.message);
+    }
   }
-
+  
   // Actualizar un acuerdo por ID
   @Put(':id')
   async update(@Param('id') id: number, @Body() updateAgreementDto: UpdateAgreementDto) {

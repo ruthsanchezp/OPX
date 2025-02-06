@@ -12,12 +12,15 @@ import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { MedicalOrdersService } from '../medical-orders/medical-orders.service'; // 👈 Importar el servicio de órdenes médicas
+import { PaymentsService } from '../payments/payments.service'; // ✅ Importamos el servicio de pagos
 
 @Controller('clients')
 export class ClientsController {
   constructor(
   private readonly clientsService: ClientsService,     
-  private readonly medicalOrdersService: MedicalOrdersService // 👈 Agregar esto
+  private readonly medicalOrdersService: MedicalOrdersService, // 👈 Agregar esto
+  private readonly paymentsService: PaymentsService // ✅ Inyectamos PaymentsService
+
   ) {}
 
   // Obtener todos los clientes
@@ -70,6 +73,14 @@ export class ClientsController {
     }
     return this.medicalOrdersService.getClientMedicalOrders(parsedClientId);
   }
-  
-  
+
+@Get(':client_id/payments')
+async getClientPayments(@Param('client_id') clientId: string) {
+  const parsedClientId = parseInt(clientId, 10);
+  if (isNaN(parsedClientId)) {
+    throw new NotFoundException(`Invalid client ID: ${clientId}`);
+  }
+  return this.paymentsService.findByClient(parsedClientId);
+}
+
 }

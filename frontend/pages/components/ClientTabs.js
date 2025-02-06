@@ -21,6 +21,11 @@ export default function ClientTabs({ clientId }) {
       >
         Orden Médica
       </Link>
+
+      <Link href={`/clients/${clientId}/payments`} className={`nav-link ${currentPath.includes(`/clients/${clientId}/payments`) ? "active" : ""}`}>
+        Pagos
+      </Link>
+      
     </div>
   );
 }

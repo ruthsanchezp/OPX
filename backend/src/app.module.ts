@@ -7,10 +7,11 @@ import { PrismaService } from './prisma/prisma.service';
 import { ClientsModule } from './clients/clients.module';
 import { AgreementsModule } from './agreements/agreements.module';
 import { MedicalOrdersModule } from './medical-orders/medical-orders.module';
+import { PaymentsModule } from './payments/payments.module';
 
 
 @Module({
-  imports: [UsersModule, ClientsModule, AgreementsModule, MedicalOrdersModule],  
+  imports: [UsersModule, ClientsModule, AgreementsModule, MedicalOrdersModule, PaymentsModule],  
   controllers: [AppController],
   providers: [AppService, PrismaService],  // Si PrismaService está en un módulo separado, lo añadimos a providers
 })

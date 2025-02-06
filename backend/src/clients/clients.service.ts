@@ -21,23 +21,24 @@ export class ClientsService {
   // ✅ Buscar cliente por ID Fiscal
   async findByIdFiscal(idFiscal: string) {
     try {
-      console.log(`Searching client by RUT: ${idFiscal}`);
-      
+      console.log(`Searching client by ID Fiscal: ${idFiscal}`);
+  
       const client = await this.prisma.client.findUnique({
-        where: { id_fiscal: idFiscal },
+        where: { id_fiscal: idFiscal.toString() }, // 🔹 Convertir a String antes de consultar
       });
   
       if (!client) {
-        console.warn(`Client with RUT ${idFiscal} not found`);
+        console.warn(`Client with ID Fiscal ${idFiscal} not found`);
         return null; // Devolver null en lugar de lanzar un error
       }
   
       return client;
     } catch (error) {
-      console.error(`Error searching client by RUT ${idFiscal}:`, error);
+      console.error(`Error searching client by ID Fiscal ${idFiscal}:`, error);
       throw new Error('Database query failed');
     }
   }
+  
   
 
   // ✅ Obtener un cliente por ID

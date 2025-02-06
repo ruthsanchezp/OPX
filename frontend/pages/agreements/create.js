@@ -1,34 +1,59 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 import axios from "axios";
+import { Form, Button, Alert } from "react-bootstrap";
 
 export default function CreateAgreement() {
+  const router = useRouter();
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("success");
+
+  // 🔹 Estado para el formulario
   const [newAgreement, setNewAgreement] = useState({
+    name: "",  // ✅ Agregado porque es obligatorio en tu schema
     agreement_type: "",
     start_date: "",
     end_date: "",
     status: "",
     total_installments: 0,
   });
+
+  // 🔹 Manejar cambios en el formulario
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNewAgreement({
+      ...newAgreement,
+      [name]: value,
+    });
+  };
+
+  // 🔹 Enviar datos al backend
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const formattedAgreement = {
-        ...newAgreement,
-        start_date: newAgreement.start_date ? new Date(newAgreement.start_date).toISOString() : null,
-        end_date: newAgreement.end_date ? new Date(newAgreement.end_date).toISOString() : null,
-      };
   
-      await axios.post("http://localhost:3001/agreements", formattedAgreement);
-      setNewAgreement({
-        agreement_type: "",
-        start_date: "",
-        end_date: "",
-        status: "",
-        total_installments: 0,
+    if (!newAgreement.name) {
+      setAlertMessage("Agreement name is required.");
+      setAlertVariant("warning");
+      setShowAlert(true);
+      return;
+    }
+  
+    try {
+      await axios.post("http://localhost:3001/agreements", {
+        ...newAgreement,
+        total_installments: parseInt(newAgreement.total_installments, 10) || null, // 🔹 Convertir antes de enviar
       });
-      alert("Agreement created successfully!");
+  
+      setAlertMessage("Agreement created successfully!");
+      setAlertVariant("success");
+      setShowAlert(true);
+      setTimeout(() => router.push("/agreements"), 2000);
     } catch (error) {
       console.error("Error creating agreement:", error);
+      setAlertMessage("Failed to create agreement. Please check the form and try again.");
+      setAlertVariant("danger");
+      setShowAlert(true);
     }
   };
   
@@ -36,75 +61,74 @@ export default function CreateAgreement() {
   return (
     <div className="container mt-4">
       <h1 className="text-center mb-4">Create Agreement</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Agreement Type</label>
-          <input
+
+      {showAlert && <Alert variant={alertVariant}>{alertMessage}</Alert>}
+
+      <Form onSubmit={handleSubmit}>
+        <Form.Group>
+          <Form.Label>Código</Form.Label>
+          <Form.Control
+            type="text"
+            name="name"
+            value={newAgreement.name}
+            onChange={handleChange}
+            required
+          />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Nombre Convenio</Form.Label>
+          <Form.Control
             type="text"
             name="agreement_type"
             value={newAgreement.agreement_type}
-            onChange={(e) =>
-              setNewAgreement({ ...newAgreement, agreement_type: e.target.value })
-            }
-            className="form-control"
-            required
+            onChange={handleChange}
           />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Start Date</label>
-          <input
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Start Date</Form.Label>
+          <Form.Control
             type="date"
             name="start_date"
             value={newAgreement.start_date}
-            onChange={(e) =>
-              setNewAgreement({ ...newAgreement, start_date: e.target.value })
-            }
-            className="form-control"
+            onChange={handleChange}
           />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">End Date</label>
-          <input
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>End Date</Form.Label>
+          <Form.Control
             type="date"
             name="end_date"
             value={newAgreement.end_date}
-            onChange={(e) =>
-              setNewAgreement({ ...newAgreement, end_date: e.target.value })
-            }
-            className="form-control"
+            onChange={handleChange}
           />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Status</label>
-          <input
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Status</Form.Label>
+          <Form.Control
             type="text"
             name="status"
             value={newAgreement.status}
-            onChange={(e) =>
-              setNewAgreement({ ...newAgreement, status: e.target.value })
-            }
-            className="form-control"
+            onChange={handleChange}
           />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Total Installments</label>
-          <input
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Total Installments</Form.Label>
+          <Form.Control
             type="number"
             name="total_installments"
             value={newAgreement.total_installments}
-            onChange={(e) =>
-              setNewAgreement({
-                ...newAgreement,
-                total_installments: parseInt(e.target.value, 10),
-              })
-            }
-            className="form-control"
+            onChange={handleChange}
+            min="0"
           />
-        </div>
-        <button type="submit" className="btn btn-primary w-100">
-          Create Agreement
-        </button>
-      </form>
+        </Form.Group>
+
+        <Button type="submit" className="mt-3">Create Agreement</Button>
+      </Form>
     </div>
   );
 }
